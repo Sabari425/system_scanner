@@ -601,7 +601,7 @@ def get_advanced_system_details():
 # -------------------------------------------------------------------
 def generate_html_report():
     downloads = get_downloads_folder()
-    html_path = os.path.join(downloads, f"SYSTEM_SCAN_{datetime.now().strftime('%Y%m%d_%H%M%S')}.html")
+    html_path = os.path.join(downloads, f"Sabari425_System_Scan_{datetime.now().strftime('%d.%m.%Y_%H-%M-%S')}.html")
 
     # Gather all data
     sections_data = {
@@ -622,7 +622,7 @@ def generate_html_report():
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>SYSTEM SCAN REPORT - TERMINAL</title>
+        <title>System Scan Report - Terminal</title>
         <style>
             @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&display=swap');
 
@@ -1264,3 +1264,4 @@ if __name__ == "__main__":
         print_status(f"SCAN FAILED: {str(e)}", "ERROR")
 
         print_status("Please ensure you have necessary permissions", "WARNING")
+
