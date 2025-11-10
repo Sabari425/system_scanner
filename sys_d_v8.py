@@ -1259,19 +1259,8 @@ if __name__ == "__main__":
         print()
         print_status("Opening report in default browser...", "INFO")
 
-        # Try to open the file in default browser
-        try:
-            if platform.system() == "Windows":
-                os.startfile(html_path)
-            elif platform.system() == "Darwin":  # macOS
-                subprocess.run(["open", html_path])
-            else:  # Linux
-                subprocess.run(["xdg-open", html_path])
-            print_status("Browser launched successfully", "SUCCESS")
-        except:
-            print_status("Could not open browser automatically", "WARNING")
-            print_status(f"Please open manually: {html_path}", "INFO")
 
     except Exception as e:
         print_status(f"SCAN FAILED: {str(e)}", "ERROR")
+
         print_status("Please ensure you have necessary permissions", "WARNING")
