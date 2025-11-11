@@ -41,20 +41,20 @@ class Colors:
     NEON_GREEN = '\033[38;5;82m'
     MATRIX_GREEN = '\033[38;5;46m'
     TERMINAL_GREEN = '\033[38;5;40m'
-    
+
     # Terminal colors
     TERMINAL_YELLOW = '\033[93m'
     TERMINAL_RED = '\033[91m'
     TERMINAL_BLUE = '\033[94m'
     TERMINAL_CYAN = '\033[96m'
     TERMINAL_MAGENTA = '\033[95m'
-    
+
     # Text effects
     BOLD = '\033[1m'
     DIM = '\033[2m'
     UNDERLINE = '\033[4m'
     BLINK = '\033[5m'
-    
+
     # Status colors
     SUCCESS = '\033[38;5;46m'
     WARNING = '\033[38;5;214m'
@@ -63,9 +63,10 @@ class Colors:
     SCAN = '\033[38;5;123m'
     DATA = '\033[38;5;141m'
     SYSTEM = '\033[38;5;220m'
-    
+
     # Utility
     RESET = '\033[0m'
+
 
 def print_colored(text, color=Colors.HACKER_GREEN, end="\n"):
     print(f"{color}{text}{Colors.RESET}", end=end)
@@ -113,6 +114,7 @@ def progress_bar(iteration, total, prefix='', suffix='', length=50, fill='█'):
     if iteration == total:
         print()
 
+
 def print_banner():
     """Hacker-style banner"""
     banner = f"""
@@ -140,6 +142,7 @@ def print_banner():
                     {Colors.TERMINAL_YELLOW}◆ SABARI425 SECURITY ◆{Colors.RESET}
 """
     print(banner)
+
 
 def simulate_scan_step(step_name, duration=1, steps=20):
     """Hacker-style scanning animation"""
@@ -278,7 +281,7 @@ def get_task_manager_details():
 
                 processes.append({
                     "PID": process_info['pid'],
-                    "Process Name": process_info['name'][:30],  # Truncate long names
+                    "Process Name": process_info['name'][:50],  # Truncate long names
                     "User": process_info['username'] or "SYSTEM",
                     "CPU %": f"{process_info['cpu_percent'] or 0:.2f}",
                     "Memory %": f"{process_info['memory_percent'] or 0:.3f}",
@@ -595,7 +598,7 @@ def get_system_health_score():
     if warnings and final_score < 80:
         print("\t\t", end='')
         print_status(f"Health score: {final_score}/100 - {len(warnings)} issues detected", "WARNING")
-        for warning in warnings[:3]:  # Show top 3 warnings
+        for warning in warnings[:]:  # Show top 3 warnings
             print("\t\t\t", end='')
             print_status(f"  • {warning}", "WARNING")
 
@@ -938,33 +941,34 @@ def get_system_environment_vars():
     print("\n\t", end='')
     print_status("Collecting environment variables...", "SYSTEM")
     env_vars = []
-    
+
     try:
         # Get all environment variables
         for key, value in os.environ.items():
             # Skip very long values and sensitive-looking keys
-            if len(str(value)) < 500 and not any(skip in key.lower() for skip in ['password', 'secret', 'key', 'token']):
+            if len(str(value)) < 1000 and not any(
+                    skip in key.lower() for skip in ['password', 'secret', 'key', 'token']):
                 env_vars.append({
                     "Variable": key,
-                    "Value": str(value)[:100] + "..." if len(str(value)) > 100 else str(value)
+                    "Value": str(value)[:] + "..." if len(str(value)) > 5000 else str(value)
                 })
-        
-        # Sort alphabetically and limit to top 50
+
         env_vars.sort(key=lambda x: x["Variable"])
         print("\t", end='')
         print_status(f"Collected {len(env_vars)} environment variables", "SUCCESS")
-        
+
     except Exception as e:
         print_status(f"Environment variables collection failed: {str(e)}", "ERROR")
-    
-    return env_vars[:50]
+
+    return env_vars[:]
+
 
 def get_installed_software():
     """Get detailed installed software information"""
     print("\n\t", end='')
     print_status("Collecting installed software information...", "SYSTEM")
     software_list = []
-    
+
     if platform.system() == "Windows":
         try:
             # Get installed programs from registry
@@ -972,7 +976,7 @@ def get_installed_software():
                 'powershell "Get-ItemProperty HKLM:\\Software\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\* | '
                 'Select-Object DisplayName, DisplayVersion, Publisher, InstallDate | Format-Table -AutoSize"'
             )
-            
+
             lines = output.split('\n')
             for line in lines:
                 if line.strip() and 'DisplayName' not in line and '---' not in line:
@@ -984,21 +988,22 @@ def get_installed_software():
                             "Publisher": parts[-2] if len(parts) > 2 else "Unknown",
                             "Install Date": parts[-1] if len(parts) > 1 else "Unknown"
                         })
-            
+
             print("\t", end='')
             print_status(f"Found {len(software_list)} installed programs", "SUCCESS")
-            
+
         except Exception as e:
             print_status(f"Software collection failed: {str(e)}", "ERROR")
-    
-    return software_list[:30]
+
+    return software_list[:]
+
 
 def get_system_drivers():
     """Get detailed driver information"""
     print("\n\t", end='')
     print_status("Collecting driver information...", "SYSTEM")
     drivers = []
-    
+
     if platform.system() == "Windows":
         try:
             output = run_cmd("driverquery /v /fo csv")
@@ -1015,21 +1020,22 @@ def get_system_drivers():
                             "State": parts[4].strip('"'),
                             "Status": parts[5].strip('"') if len(parts) > 5 else "N/A"
                         })
-            
+
             print("\t", end='')
             print_status(f"Collected {len(drivers)} driver entries", "SUCCESS")
-            
+
         except Exception as e:
             print_status(f"Driver collection failed: {str(e)}", "ERROR")
-    
-    return drivers[:20]
+
+    return drivers[:]
+
 
 def get_system_services():
     """Get detailed service information"""
     print("\n\t", end='')
     print_status("Collecting service information...", "SYSTEM")
     services = []
-    
+
     try:
         for service in psutil.win_service_iter() if platform.system() == "Windows" else []:
             try:
@@ -1040,25 +1046,27 @@ def get_system_services():
                     "Status": service_info['status'],
                     "Startup Type": service_info.get('startup', 'N/A'),
                     "PID": service_info.get('pid', 'N/A'),
-                    "Binary Path": service_info.get('binpath', 'N/A')[:50] + "..." if service_info.get('binpath') and len(service_info.get('binpath', '')) > 50 else service_info.get('binpath', 'N/A')
+                    "Binary Path": service_info.get('binpath', 'N/A')[:500] + "..." if service_info.get(
+                        'binpath') and len(service_info.get('binpath', '')) > 500 else service_info.get('binpath', 'N/A')
                 })
             except:
                 continue
-        
+
         print("\t", end='')
         print_status(f"Collected {len(services)} services", "SUCCESS")
-        
+
     except Exception as e:
         print_status(f"Service collection failed: {str(e)}", "ERROR")
-    
-    return services[:30]
+
+    return services[:]
+
 
 def get_event_logs_summary():
     """Get event log summary"""
     print("\n\t", end='')
     print_status("Collecting event log summary...", "SYSTEM")
     event_summary = []
-    
+
     if platform.system() == "Windows":
         try:
             # Get recent system errors
@@ -1066,29 +1074,30 @@ def get_event_logs_summary():
                 'powershell "Get-EventLog -LogName System -EntryType Error -Newest 10 | '
                 'Select-Object TimeGenerated, Source, InstanceId, Message | Format-Table -AutoSize"'
             )
-            
+
             lines = errors.split('\n')
             for i, line in enumerate(lines[3:13]):  # Skip headers
                 if line.strip():
                     event_summary.append({
                         "Event Type": "System Error",
-                        "Details": line.strip()[:100] + "..." if len(line.strip()) > 100 else line.strip()
+                        "Details": line.strip()[:400] + "..." if len(line.strip()) > 200 else line.strip()
                     })
-            
+
             print("\t", end='')
             print_status("Event log summary collected", "SUCCESS")
-            
+
         except Exception as e:
             print_status(f"Event log collection failed: {str(e)}", "ERROR")
-    
+
     return event_summary
+
 
 def get_hardware_details():
     """Get comprehensive hardware details"""
     print("\n\t", end='')
     print_status("Collecting detailed hardware information...", "SYSTEM")
     hardware = []
-    
+
     try:
         # BIOS Information
         if platform.system() == "Windows":
@@ -1104,7 +1113,7 @@ def get_hardware_details():
                         break
             except:
                 pass
-        
+
         # Motherboard Information
         if platform.system() == "Windows":
             try:
@@ -1115,11 +1124,12 @@ def get_hardware_details():
                         hardware.append({"Category": "MOTHERBOARD_MANUFACTURER", "Detail": parts[1]})
                         hardware.append({"Category": "MOTHERBOARD_PRODUCT", "Detail": parts[2]})
                         hardware.append({"Category": "MOTHERBOARD_VERSION", "Detail": parts[3]})
-                        hardware.append({"Category": "MOTHERBOARD_SERIAL", "Detail": parts[4] if len(parts) > 4 else "N/A"})
+                        hardware.append(
+                            {"Category": "MOTHERBOARD_SERIAL", "Detail": parts[4] if len(parts) > 4 else "N/A"})
                         break
             except:
                 pass
-        
+
         # System UUID
         try:
             system_uuid = run_cmd("wmic csproduct get uuid")
@@ -1129,7 +1139,7 @@ def get_hardware_details():
                     break
         except:
             pass
-        
+
         # Battery Information (if available)
         try:
             battery = psutil.sensors_battery()
@@ -1140,21 +1150,22 @@ def get_hardware_details():
                     hardware.append({"Category": "BATTERY_TIME_LEFT", "Detail": f"{battery.secsleft // 60} minutes"})
         except:
             pass
-        
+
         print("\t", end='')
         print_status("Hardware details collected", "SUCCESS")
-        
+
     except Exception as e:
         print_status(f"Hardware details collection failed: {str(e)}", "ERROR")
-    
+
     return hardware
+
 
 def get_network_connections():
     """Get active network connections"""
     print("\n\t", end='')
     print_status("Collecting network connections...", "SYSTEM")
     connections = []
-    
+
     try:
         for conn in psutil.net_connections(kind='inet'):
             try:
@@ -1168,22 +1179,22 @@ def get_network_connections():
                     })
             except:
                 continue
-        
-        # Limit to recent connections
+
         print("\t", end='')
         print_status(f"Found {len(connections)} established connections", "SUCCESS")
-        
+
     except Exception as e:
         print_status(f"Network connections collection failed: {str(e)}", "ERROR")
-    
-    return connections[:20]
+
+    return connections[:]
+
 
 def get_system_logs():
     """Get system logs and recent activities"""
     print("\n\t", end='')
     print_status("Collecting system logs...", "SYSTEM")
     logs = []
-    
+
     try:
         # Recent login information
         if platform.system() == "Windows":
@@ -1200,34 +1211,35 @@ def get_system_logs():
                             })
             except:
                 pass
-        
+
         # System boot history
         boot_time = psutil.boot_time()
         logs.append({
             "Log Type": "SYSTEM_BOOT",
             "Details": f"Last boot: {datetime.fromtimestamp(boot_time).strftime('%Y-%m-%d %H:%M:%S')}"
         })
-        
+
         # Python process information
         logs.append({
             "Log Type": "SCANNER_INFO",
             "Details": f"Scanner PID: {os.getpid()} | User: {getpass.getuser()} | Python: {sys.version.split()[0]}"
         })
-        
+
         print("\t", end='')
         print_status("System logs collected", "SUCCESS")
-        
+
     except Exception as e:
         print_status(f"System logs collection failed: {str(e)}", "ERROR")
-    
+
     return logs
+
 
 def get_security_information():
     """Get security-related information"""
     print("\n\t", end='')
     print_status("Collecting security information...", "SYSTEM")
     security_info = []
-    
+
     try:
         # Windows Defender status
         if platform.system() == "Windows":
@@ -1236,7 +1248,7 @@ def get_security_information():
                     'powershell "Get-MpComputerStatus | Select-Object AntivirusEnabled, AMServiceEnabled, '
                     'AntispywareEnabled, RealTimeProtectionEnabled, OnAccessProtectionEnabled | Format-List"'
                 )
-                
+
                 for line in defender_status.split('\n'):
                     if ':' in line:
                         key, value = line.split(':', 1)
@@ -1246,7 +1258,7 @@ def get_security_information():
                         })
             except:
                 pass
-        
+
         # Firewall status
         if platform.system() == "Windows":
             try:
@@ -1260,11 +1272,12 @@ def get_security_information():
                         break
             except:
                 pass
-        
+
         # UAC status
         if platform.system() == "Windows":
             try:
-                uac_status = run_cmd('reg query "HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System" /v EnableLUA')
+                uac_status = run_cmd(
+                    'reg query "HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System" /v EnableLUA')
                 if '0x1' in uac_status:
                     security_info.append({
                         "Security Feature": "UAC_STATUS",
@@ -1272,21 +1285,22 @@ def get_security_information():
                     })
             except:
                 pass
-        
+
         print("\t", end='')
         print_status("Security information collected", "SUCCESS")
-        
+
     except Exception as e:
         print_status(f"Security information collection failed: {str(e)}", "ERROR")
-    
+
     return security_info
+
 
 def get_power_management():
     """Get power management settings"""
     print("\n\t", end='')
     print_status("Collecting power management information...", "SYSTEM")
     power_info = []
-    
+
     try:
         # Power plan
         if platform.system() == "Windows":
@@ -1300,7 +1314,7 @@ def get_power_management():
                         })
             except:
                 pass
-        
+
         # Battery information (if available)
         try:
             battery = psutil.sensors_battery()
@@ -1320,38 +1334,40 @@ def get_power_management():
                     })
         except:
             pass
-        
+
         print("\t", end='')
         print_status("Power management information collected", "SUCCESS")
-        
+
     except Exception as e:
         print_status(f"Power management collection failed: {str(e)}", "ERROR")
-    
+
     return power_info
+
 
 def get_system_uptime_analysis():
     """Get detailed system uptime analysis"""
     print("\n\t", end='')
     print_status("Analyzing system uptime...", "SYSTEM")
     uptime_info = []
-    
+
     try:
         boot_time = psutil.boot_time()
         uptime = datetime.now() - datetime.fromtimestamp(boot_time)
-        
-        uptime_info.append({"Metric": "SYSTEM_BOOT_TIME", "Value": datetime.fromtimestamp(boot_time).strftime('%Y-%m-%d %H:%M:%S')})
+
+        uptime_info.append(
+            {"Metric": "SYSTEM_BOOT_TIME", "Value": datetime.fromtimestamp(boot_time).strftime('%Y-%m-%d %H:%M:%S')})
         uptime_info.append({"Metric": "CURRENT_UPTIME", "Value": str(uptime).split('.')[0]})
         uptime_info.append({"Metric": "UPTIME_DAYS", "Value": f"{uptime.days} days"})
         uptime_info.append({"Metric": "UPTIME_HOURS", "Value": f"{(uptime.seconds // 3600)} hours"})
         uptime_info.append({"Metric": "SYSTEM_TIMEZONE", "Value": str(time.tzname)})
         uptime_info.append({"Metric": "CURRENT_DATETIME", "Value": datetime.now().strftime('%Y-%m-%d %H:%M:%S')})
-        
+
         print("\t", end='')
         print_status("Uptime analysis completed", "SUCCESS")
-        
+
     except Exception as e:
         print_status(f"Uptime analysis failed: {str(e)}", "ERROR")
-    
+
     return uptime_info
 
 
@@ -1376,7 +1392,7 @@ def generate_html_report():
     # Hacker-style scanning steps
     scan_steps = [
         "System Architecture Recon",
-        "Hardware Fingerprinting", 
+        "Hardware Fingerprinting",
         "Network Interface Mapping",
         "User Account Enumeration",
         "Software Inventory Scan",
@@ -1871,42 +1887,6 @@ def generate_html_report():
                 50% {{ border-color: #00ff00 }}
             }}
 
-            /* Hacker corner elements */
-            .corner {{
-                position: fixed;
-                width: 50px;
-                height: 50px;
-                border: 2px solid #00ff00;
-                z-index: 999;
-            }}
-
-            .corner-tl {{
-                top: 20px;
-                left: 20px;
-                border-right: none;
-                border-bottom: none;
-            }}
-
-            .corner-tr {{
-                top: 20px;
-                right: 20px;
-                border-left: none;
-                border-bottom: none;
-            }}
-
-            .corner-bl {{
-                bottom: 20px;
-                left: 20px;
-                border-right: none;
-                border-top: none;
-            }}
-
-            .corner-br {{
-                bottom: 20px;
-                right: 20px;
-                border-left: none;
-                border-top: none;
-            }}
 
             /* Binary rain animation */
             @keyframes binaryRain {{
@@ -1929,16 +1909,12 @@ def generate_html_report():
     <body>
         <div class="matrix-bg"></div>
         <div class="scan-line"></div>
-        <div class="corner corner-tl"></div>
-        <div class="corner corner-tr"></div>
-        <div class="corner corner-bl"></div>
-        <div class="corner corner-br"></div>
         <div class="matrix-rain" id="matrixRain"></div>
 
         <div class="container">
             <div class="header">
-                <h1>SYSTEM PENETRATION REPORT</h1>
-                <div class="creator">SABARI425 SECURITY</div>
+                <h1>System Penetration Report | Sabari_425</h1>
+                <div class="creator">Sabari_425 Organisation | Security Check Team</div>
                 <p>> SCAN INITIATED: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}</p>
                 <p>> TARGET: {socket.gethostname()} | PLATFORM: {platform.platform()}</p>
                 <div class="health-score">
@@ -1955,7 +1931,8 @@ def generate_html_report():
         """
 
         if data:
-            if section_name in ["NETWORK ANALYSIS", "TASK MANAGER - RUNNING PROCESSES", "WIFI SECURITY ANALYSIS", "NETWORK CONNECTIONS", "SYSTEM SERVICES", "INSTALLED SOFTWARE"]:
+            if section_name in ["NETWORK ANALYSIS", "TASK MANAGER - RUNNING PROCESSES", "WIFI SECURITY ANALYSIS",
+                                "NETWORK CONNECTIONS", "SYSTEM SERVICES", "INSTALLED SOFTWARE"]:
                 # Special handling for wide tables with scrolling
                 table_class = "task-manager-table" if "TASK MANAGER" in section_name else "scroll-table"
                 html_content += f'<div class="scroll-container"><table class="{table_class}">'
@@ -2017,7 +1994,8 @@ def generate_html_report():
                             html_content += f'<tr><td><span class="terminal-prompt">></span> {item[0]}</td><td class="metric-value">{item[1]}</td></tr>'
                     html_content += '</table>'
 
-            if section_name in ["NETWORK ANALYSIS", "TASK MANAGER - RUNNING PROCESSES", "WIFI SECURITY ANALYSIS", "NETWORK CONNECTIONS", "SYSTEM SERVICES", "INSTALLED SOFTWARE"]:
+            if section_name in ["NETWORK ANALYSIS", "TASK MANAGER - RUNNING PROCESSES", "WIFI SECURITY ANALYSIS",
+                                "NETWORK CONNECTIONS", "SYSTEM SERVICES", "INSTALLED SOFTWARE"]:
                 html_content += '</div>'
         else:
             html_content += '<p style="color: #00cc00; text-align: center; padding: 30px; font-style: italic;">> NO DATA AVAILABLE</p>'
@@ -2121,16 +2099,6 @@ def generate_html_report():
                     rows.forEach(row => tbody.appendChild(row));
                 }
 
-                // Add corner animations
-                const corners = document.querySelectorAll('.corner');
-                corners.forEach((corner, index) => {
-                    setInterval(() => {
-                        corner.style.boxShadow = '0 0 10px #00ff00';
-                        setTimeout(() => {
-                            corner.style.boxShadow = 'none';
-                        }, 500);
-                    }, 2000 + index * 500);
-                });
             });
 
             // Handle window resize
@@ -2176,27 +2144,31 @@ if __name__ == "__main__":
 
         health_score = get_system_health_score()
 
-        print(); print()
+        print();
+        print()
         print_status("SCAN REPORT SUMMARY:", "SUCCESS")
         print_status(f"Output File: {html_path}", "DATA")
 
         if health_score >= 80:
-            print("\t", end=''); print_status(f"System Health: {health_score}/100 (SECURE)", "SUCCESS")
+            print("\t", end='');
+            print_status(f"System Health: {health_score}/100 (SECURE)", "SUCCESS")
         elif health_score >= 60:
-            print("\t", end=''); print_status(f"System Health: {health_score}/100 (VULNERABLE)", "WARNING")
+            print("\t", end='');
+            print_status(f"System Health: {health_score}/100 (VULNERABLE)", "WARNING")
         else:
-            print("\t", end=''); print_status(f"System Health: {health_score}/100 (COMPROMISED)", "ERROR")
+            print("\t", end='');
+            print_status(f"System Health: {health_score}/100 (COMPROMISED)", "ERROR")
 
         print("\n\n")
 
         print_status("SCANNED MODULES:", "INFO")
         sections = [
-            "SYSTEM OVERVIEW", "HARDWARE DETAILS", "STORAGE ANALYSIS", 
+            "SYSTEM OVERVIEW", "HARDWARE DETAILS", "STORAGE ANALYSIS",
             "GRAPHICS CARD INFORMATION", "NETWORK ANALYSIS", "NETWORK CONNECTIONS",
             "WIFI SECURITY ANALYSIS", "USER ACCOUNTS", "SYSTEM SERVICES",
             "INSTALLED SOFTWARE", "SYSTEM DRIVERS", "SECURITY INFORMATION",
             "POWER MANAGEMENT", "ENVIRONMENT VARIABLES", "SYSTEM UPTIME ANALYSIS",
-            "SYSTEM LOGS", "EVENT LOGS SUMMARY", "ADVANCED SYSTEM DETAILS", 
+            "SYSTEM LOGS", "EVENT LOGS SUMMARY", "ADVANCED SYSTEM DETAILS",
             "SYSTEM PERFORMANCE", "TASK MANAGER"
         ]
         for section in sections:
