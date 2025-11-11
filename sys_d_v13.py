@@ -1119,7 +1119,7 @@ def generate_html_report():
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="icon" type="image/png" href="https://cdn.vectorstock.com/i/preview-1x/78/94/silhouette-a-hacker-in-hood-with-binary-code-vector-33797894.jpg">
+        <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/Sabari425/system_scanner/refs/heads/main/hacker-in-with-binary-code-vector-33797894-modified.png">
         <title>System Scan Report - Sabari425</title>
         <style>
             @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&display=swap');
@@ -1791,4 +1791,5 @@ if __name__ == "__main__":
     except Exception as e:
         print_status(f"SCAN FAILED: {str(e)}", "ERROR")
         print_status("Please ensure you have necessary permissions", "WARNING")
+
 
