@@ -167,6 +167,7 @@ class Colors:
     UNDERLINE_BLUE = '\033[4;94m'
 
     BLINK_RED = '\033[5;91m'
+    BB_YELLOW = '\033[93;1;5m'
     BLINK_MAGENTA = '\033[95;5m'
     BLINK_GREEN = '\033[5;92m'
 
@@ -210,7 +211,7 @@ def print_status(message, status="INFO"):
         "ERROR": Colors.BRIGHT_RED,
         "SCAN": Colors.CYAN,
         "DATA": Colors.BLINK_MAGENTA,
-        "SYSTEM": Colors.RAINBOW_YELLOW
+        "SYSTEM": Colors.GOLD
     }
     color = status_colors.get(status, Colors.WHITE)
     prefix = {
