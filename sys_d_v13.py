@@ -167,6 +167,7 @@ class Colors:
     UNDERLINE_BLUE = '\033[4;94m'
 
     BLINK_RED = '\033[5;91m'
+    BLINK_MAGENTA = '\033[95;5m'
     BLINK_GREEN = '\033[5;92m'
 
     # Gradient helpers (you can create gradients by using multiple colors)
@@ -208,7 +209,7 @@ def print_status(message, status="INFO"):
         "WARNING": Colors.RAINBOW_ORANGE,
         "ERROR": Colors.BRIGHT_RED,
         "SCAN": Colors.CYAN,
-        "DATA": Colors.BRIGHT_MAGENTA,
+        "DATA": Colors.BLINK_MAGENTA,
         "SYSTEM": Colors.RAINBOW_YELLOW
     }
     color = status_colors.get(status, Colors.WHITE)
@@ -1729,11 +1730,11 @@ if __name__ == "__main__":
         html_path = generate_html_report()
 
         print()
-        print_colored("╔═══════════════════════════════════════════════════════════════════════════╗", Colors.BLINK_GREEN)
-        print_colored("║                                                                           ║", Colors.BLINK_GREEN)
-        print_colored("║                        .....  SCAN COMPLETED  .....                       ║", Colors.BLINK_GREEN)
-        print_colored("║                                                                           ║", Colors.BLINK_GREEN)
-        print_colored("╚═══════════════════════════════════════════════════════════════════════════╝", Colors.BLINK_GREEN)
+        print_colored("╔═══════════════════════════════════════════════════════════════════════════╗", Colors.BRIGHT_GREEN)
+        print_colored("║                                                                           ║", Colors.BRIGHT_GREEN)
+        print_colored("║                       .....  SCAN COMPLETED  .....                        ║", Colors.BRIGHT_GREEN)
+        print_colored("║                                                                           ║", Colors.BRIGHT_GREEN)
+        print_colored("╚═══════════════════════════════════════════════════════════════════════════╝", Colors.BRIGHT_GREEN)
         print("\n\n\n")
 
         health_score = get_system_health_score()
