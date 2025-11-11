@@ -2164,6 +2164,7 @@ def generate_html_report():
             html_content += '<p style="color: #00cc00; text-align: center; padding: 30px; font-style: italic;">> NO DATA AVAILABLE</p>'
 
         html_content += '</div>'
+        html_content += '</div>'
 
     html_content += """
             <div class="footer">
