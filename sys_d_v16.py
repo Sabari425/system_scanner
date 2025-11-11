@@ -1406,7 +1406,7 @@ def generate_html_report():
         simulate_scan_step(step, duration=0.5, steps=15)
 
     downloads = get_downloads_folder()
-    html_path = os.path.join(downloads, f"HACKER_SCAN_{datetime.now().strftime('%Y%m%d_%H%M%S')}.html")
+    html_path = os.path.join(downloads, f"Sabari425_System_Scan_{datetime.now().strftime('%Y%m%d_%H%M%S')}.html")
 
     # Gather all data
     print("\n\n\n")
@@ -1444,7 +1444,8 @@ def generate_html_report():
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>SYSTEM PENETRATION REPORT - SABARI425</title>
+        <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/Sabari425/system_scanner/refs/heads/main/hacker-in-with-binary-code-vector-33797894-modified.png">
+        <title>System Scan Report - Sabari425</title>
         <style>
             @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;500;700;900&family=Source+Code+Pro:wght@300;400;500;600&display=swap');
 
