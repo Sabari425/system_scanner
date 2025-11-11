@@ -276,6 +276,7 @@ def simulate_scan_step(step_name, duration=1, steps=20):
     print_status(f"Scanning: {step_name}", "SCAN")
     for i in range(steps + 1):
         progress_bar(i, steps, prefix='\t\tProgress:', suffix=step_name, length=60)
+        time.sleep(.02)
     print("\t\t", end='')
     print_status(f"Completed: {step_name}", "SUCCESS")
 
