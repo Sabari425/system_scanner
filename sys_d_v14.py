@@ -1538,7 +1538,7 @@ def generate_html_report():
         simulate_scan_step(step, duration=0.5, steps=15)
 
     downloads = get_downloads_folder()
-    html_path = os.path.join(downloads, f"Sabari425_System_Scan_{datetime.now().strftime('%Y%m%d_%H%M%S')}.html")
+    html_path = os.path.join(downloads, f"Sabari425_System_Scan_{datetime.now().strftime('%d.%m.%Y_%H-%M-%S')}.html")
 
     # Gather all data
     print("\n\n\n")
