@@ -203,23 +203,23 @@ def print_colored(text, color=Colors.WHITE, end="\n"):
 
 def print_status(message, status="INFO"):
     status_colors = {
-        "INFO": Colors.BLUE,
-        "SUCCESS": Colors.GREEN,
-        "WARNING": Colors.YELLOW,
-        "ERROR": Colors.RED,
+        "INFO": Colors.BOLD_CYAN,
+        "SUCCESS": Colors.RAINBOW_GREEN,
+        "WARNING": Colors.RAINBOW_ORANGE,
+        "ERROR": Colors.BRIGHT_RED,
         "SCAN": Colors.CYAN,
-        "DATA": Colors.MAGENTA,
-        "SYSTEM": Colors.ORANGE
+        "DATA": Colors.BRIGHT_MAGENTA,
+        "SYSTEM": Colors.RAINBOW_YELLOW
     }
     color = status_colors.get(status, Colors.WHITE)
     prefix = {
-        "INFO": "[✦]",
-        "SUCCESS": "[+]",
+        "INFO": "[+]",
+        "SUCCESS": "[✦]",
         "WARNING": "[!]",
         "ERROR": "[-]",
         "SCAN": "[→]",
         "DATA": "[■]",
-        "SYSTEM": "[⚙]"
+        "SYSTEM": "[S]"
     }.get(status, "[*]")
 
     print_colored(f"{prefix} {message}", color)
@@ -239,7 +239,7 @@ def progress_bar(iteration, total, prefix='', suffix='', length=50, fill='█', 
     else:
         bar_color = Colors.GREEN
 
-    print_colored(f'\r{prefix} |{bar_color}{bar}{Colors.RESET}| {percent}% {suffix}', color, end='')
+    print_colored(f'\r{prefix} |{bar_color}{bar}{Colors.RESET}| {percent}%   -   {suffix}', color, end='')
     if iteration == total:
         print()
 
@@ -265,15 +265,16 @@ def print_banner():
 
 """
     print(banner)
-    print_colored("                     ✦     ..... SABARI425 .....     ✦                ", Colors.MAGENTA)
+    print_colored("                     ✦     ..... SABARI425 .....     ✦                ", Colors.BOLD_MAGENTA)
     print("\n\n\n\n")
 
 def simulate_scan_step(step_name, duration=1, steps=20):
     """Simulate a scanning step with progress bar"""
+    print("\n\t", end='')
     print_status(f"Scanning: {step_name}", "SCAN")
     for i in range(steps + 1):
-        time.sleep(duration / steps)
-        progress_bar(i, steps, prefix='Progress:', suffix=step_name, length=30)
+        progress_bar(i, steps, prefix='\t\tProgress:', suffix=step_name, length=60)
+    print("\t\t", end='')
     print_status(f"Completed: {step_name}", "SUCCESS")
 
 
@@ -292,7 +293,6 @@ def run_cmd(cmd, use_cache=True, task_name="Executing command"):
             return output
 
     try:
-        print_status(f"{task_name}...", "SCAN")
         start_time = time.time()
 
         result = subprocess.run(
@@ -311,7 +311,6 @@ def run_cmd(cmd, use_cache=True, task_name="Executing command"):
         if use_cache:
             command_cache[cache_key] = (datetime.now(), output)
 
-        print_status(f"{task_name} completed ({execution_time:.2f}s)", "SUCCESS")
         return output
 
     except subprocess.TimeoutExpired:
@@ -336,6 +335,7 @@ def get_downloads_folder():
 #  ENHANCED TASK MANAGER WITH COMPREHENSIVE PROCESS INFORMATION
 # -------------------------------------------------------------------
 def get_task_manager_details():
+    print("\n\t", end='')
     print_status("Collecting comprehensive process information...", "SYSTEM")
     processes = []
 
@@ -422,6 +422,7 @@ def get_task_manager_details():
                 continue
 
     except Exception as e:
+        print("\t", end='')
         print_status(f"Process collection error: {str(e)}", "ERROR")
         processes.append({
             "PID": "ERROR",
@@ -436,14 +437,17 @@ def get_task_manager_details():
     # Sort by CPU usage descending
     try:
         processes.sort(key=lambda x: float(x['CPU %'].replace('%', '')) if x['CPU %'] != 'N/A' else 0, reverse=True)
+        print("\t", end='')
         print_status(f"Collected {len(processes)} processes, sorted by CPU usage", "SUCCESS")
     except:
+        print("\n\t", end='')
         print_status(f"Collected {len(processes)} processes", "WARNING")
 
-    return processes[:200]  # Return top 200 processes by CPU usage
+    return processes[:]  # Return top 200 processes by CPU usage
 
 
 def get_system_performance():
+    print("\n\t", end='')
     print_status("Analyzing real-time system performance...", "SYSTEM")
     performance = []
 
@@ -507,9 +511,11 @@ def get_system_performance():
             "Details": "Hardware sensors detected" if has_temp else "No sensor data"
         })
 
+        print("\t", end='')
         print_status("Performance analysis completed", "SUCCESS")
 
     except Exception as e:
+        print()
         print_status(f"Performance analysis failed: {str(e)}", "ERROR")
 
     return performance
@@ -519,6 +525,7 @@ def get_system_performance():
 #  USERS AND ACCOUNTS INFORMATION
 # -------------------------------------------------------------------
 def get_users_information():
+    print("\n\t", end='')
     print_status("Collecting user account information...", "SYSTEM")
     users_info = []
 
@@ -535,6 +542,7 @@ def get_users_information():
                         if user and user not in ['The', 'command', 'completed', 'successfully.']:
                             users.append(user)
 
+            print("\t", end='')
             print_status(f"Found {len(users)} user accounts", "DATA")
 
             for user in users:
@@ -574,6 +582,7 @@ def get_users_information():
                 except Exception:
                     continue
 
+            print("\t", end='')
             print_status(f"Collected details for {len(users_info)} users", "SUCCESS")
 
         except Exception as e:
@@ -599,13 +608,13 @@ def get_system_health_score():
         cpu_usage = psutil.cpu_percent(interval=1)
         if cpu_usage > 90:
             score -= 20
-            warnings.append("CRITICAL: CPU usage very high")
+            warnings.append("[CPU Health]  CRITICAL: CPU usage very high")
         elif cpu_usage > 80:
             score -= 15
-            warnings.append("WARNING: CPU usage high")
+            warnings.append("[CPU Health]  WARNING: CPU usage high")
         elif cpu_usage > 70:
             score -= 10
-            warnings.append("NOTICE: CPU usage elevated")
+            warnings.append("[CPU Health]  NOTICE: CPU usage elevated")
         elif cpu_usage > 60:
             score -= 5
 
@@ -613,13 +622,13 @@ def get_system_health_score():
         memory = psutil.virtual_memory()
         if memory.percent > 95:
             score -= 20
-            warnings.append("CRITICAL: Memory usage very high")
+            warnings.append("[Memory Health]  CRITICAL: Memory usage very high")
         elif memory.percent > 85:
             score -= 15
-            warnings.append("WARNING: Memory usage high")
+            warnings.append("[Memory Health]  WARNING: Memory usage high")
         elif memory.percent > 75:
             score -= 10
-            warnings.append("NOTICE: Memory usage elevated")
+            warnings.append("[Memory Health]  NOTICE: Memory usage elevated")
         elif memory.percent > 65:
             score -= 5
 
@@ -636,13 +645,13 @@ def get_system_health_score():
                 if usage.percent > 95:
                     disk_warnings += 3
                     critical_disks += 1
-                    warnings.append(f"CRITICAL: Disk {part.device} at {usage.percent}%")
+                    warnings.append(f"[Disk Health]  CRITICAL: Disk {part.device} at {usage.percent}%")
                 elif usage.percent > 90:
                     disk_warnings += 2
-                    warnings.append(f"WARNING: Disk {part.device} at {usage.percent}%")
+                    warnings.append(f"[Disk Health]  WARNING: Disk {part.device} at {usage.percent}%")
                 elif usage.percent > 85:
                     disk_warnings += 1
-                    warnings.append(f"NOTICE: Disk {part.device} at {usage.percent}%")
+                    warnings.append(f"[Disk Health]  NOTICE: Disk {part.device} at {usage.percent}%")
             except:
                 continue
 
@@ -659,10 +668,10 @@ def get_system_health_score():
                     for entry in entries:
                         if entry.current > 85:
                             high_temp_count += 3
-                            warnings.append(f"CRITICAL: {name} temperature {entry.current}°C")
+                            warnings.append(f"[Temperature Health]  CRITICAL: {name} temperature {entry.current}°C")
                         elif entry.current > 75:
                             high_temp_count += 2
-                            warnings.append(f"WARNING: {name} temperature {entry.current}°C")
+                            warnings.append(f"[Temperature Health]  WARNING: {name} temperature {entry.current}°C")
                         elif entry.current > 65:
                             high_temp_count += 1
                 score -= min(high_temp_count, 12)
@@ -685,13 +694,13 @@ def get_system_health_score():
 
             if zombie_count > 5:
                 score -= 8
-                warnings.append(f"WARNING: {zombie_count} zombie processes")
+                warnings.append(f"[Process Health]  WARNING: {zombie_count} zombie processes")
             elif zombie_count > 0:
                 score -= 4
 
             if high_cpu_processes > 3:
                 score -= 7
-                warnings.append(f"NOTICE: {high_cpu_processes} high-CPU processes")
+                warnings.append(f"[Process Health]  NOTICE: {high_cpu_processes} high-CPU processes")
         except:
             pass
 
@@ -710,14 +719,17 @@ def get_system_health_score():
 
     # Log warnings if any
     if warnings and final_score < 80:
+        print("\t\t", end='')
         print_status(f"Health score: {final_score}/100 - {len(warnings)} issues detected", "WARNING")
         for warning in warnings[:3]:  # Show top 3 warnings
+            print("\t\t\t", end='')
             print_status(f"  • {warning}", "WARNING")
 
     return final_score
 
 
 def get_device_specifications():
+    print("\n\t", end='')
     print_status("Collecting comprehensive system specifications...", "SYSTEM")
     info = OrderedDict()
 
@@ -769,6 +781,7 @@ def get_device_specifications():
 
 
 def get_advanced_storage_details():
+    print("\n\t", end='')
     print_status("Analyzing storage devices...", "SYSTEM")
     disks = []
 
@@ -808,11 +821,13 @@ def get_advanced_storage_details():
         except:
             continue
 
+    print("\t", end='')
     print_status(f"Analyzed {len(disks)} storage devices", "SUCCESS")
     return disks
 
 
 def get_comprehensive_graphics_info():
+    print("\n\t", end='')
     print_status("Collecting graphics card information...", "SYSTEM")
     gpu_info = []
 
@@ -834,6 +849,7 @@ def get_comprehensive_graphics_info():
                                 "Video Processor": parts[5] if len(parts) > 5 else "UNKNOWN",
                                 "Current Resolution": parts[6] if len(parts) > 6 else "UNKNOWN"
                             })
+                print("\t", end='')
                 print_status(f"Found {len(gpu_info)} graphics cards", "SUCCESS")
         except Exception as e:
             print_status(f"GPU information collection failed: {str(e)}", "ERROR")
@@ -843,6 +859,7 @@ def get_comprehensive_graphics_info():
 
 
 def get_network_analysis():
+    print("\n\t", end='')
     print_status("Analyzing network interfaces...", "SYSTEM")
     net_info = []
 
@@ -893,6 +910,7 @@ def get_network_analysis():
 
                 net_info.append(interface_data)
 
+        print("\t", end='')
         print_status(f"Analyzed {len(net_info)} network interfaces", "SUCCESS")
 
     except Exception as e:
@@ -902,6 +920,7 @@ def get_network_analysis():
 
 
 def get_comprehensive_wifi_analysis():
+    print("\n\t", end='')
     print_status("Scanning WiFi networks...", "SYSTEM")
     wifi_info = []
 
@@ -915,6 +934,7 @@ def get_comprehensive_wifi_analysis():
                     if profile_name:
                         profiles.append(profile_name)
 
+            print("\t", end='')
             print_status(f"Found {len(profiles)} WiFi profiles", "DATA")
 
             for profile in profiles:
@@ -952,6 +972,7 @@ def get_comprehensive_wifi_analysis():
                     })
 
             found_passwords = len([w for w in wifi_info if w["Status"] == "PASSWORD_FOUND"])
+            print("\t", end='')
             print_status(f"WiFi analysis complete - {found_passwords} passwords found", "SUCCESS")
 
         except Exception as e:
@@ -961,6 +982,7 @@ def get_comprehensive_wifi_analysis():
 
 
 def get_advanced_system_details():
+    print("\n\t", end='')
     print_status("Collecting advanced system details...", "SYSTEM")
     advanced_info = []
 
@@ -1024,6 +1046,7 @@ def get_advanced_system_details():
             except Exception as e:
                 advanced_info.append({"Category": "WINDOWS_ADVANCED_ERROR", "Detail": str(e)})
 
+        print("\t", end='')
         print_status("Advanced system details collected", "SUCCESS")
 
     except Exception as e:
@@ -1069,7 +1092,9 @@ def generate_html_report():
     html_path = os.path.join(downloads, f"SYSTEM_SCAN_{datetime.now().strftime('%Y%m%d_%H%M%S')}.html")
 
     # Gather all data
+    print("\n\n\n")
     print_status("Collecting system data...", "SCAN")
+
     sections_data = {
         "SYSTEM OVERVIEW": get_device_specifications(),
         "STORAGE ANALYSIS": get_advanced_storage_details(),
@@ -1482,7 +1507,7 @@ def generate_html_report():
         <div class="container">
             <div class="header">
                 <h1>><span class="blink">_</span> SYSTEM SCAN REPORT</h1>
-                <div class="creator">CREATED BY: SABARI425</div>
+                <div class="creator">SABARI_425 Organisation</div>
                 <p>> SCAN INITIATED: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}</p>
                 <p>> TARGET: {socket.gethostname()} | PLATFORM: {platform.platform()}</p>
                 <div class="health-score">
@@ -1683,6 +1708,7 @@ def generate_html_report():
     with open(html_path, 'w', encoding='utf-8') as f:
         f.write(html_content)
 
+    print("\n\n")
     print_status("HTML report generated successfully!", "SUCCESS")
     print_status(f"Location: {html_path}", "DATA")
 
@@ -1694,9 +1720,8 @@ def generate_html_report():
 # -------------------------------------------------------------------
 if __name__ == "__main__":
     print()
-    print_colored("SYSTEM SCAN INITIATED...", Colors.GREEN)
+    print_colored("SYSTEM SCAN INITIATED...", Colors.CYAN)
     print_status("Initializing advanced scanner modules...", "INFO")
-    time.sleep(1)
 
     browser_opened = False
 
@@ -1704,26 +1729,27 @@ if __name__ == "__main__":
         html_path = generate_html_report()
 
         print()
-        print_colored("╔══════════════════════════════════════════════════════════════╗", Colors.GREEN)
-        print_colored("║                                                              ║", Colors.GREEN)
-        print_colored("║                 .....  SCAN COMPLETED  .....                 ║", Colors.GREEN)
-        print_colored("║                                                              ║", Colors.GREEN)
-        print_colored("╚══════════════════════════════════════════════════════════════╝", Colors.GREEN)
-        print()
+        print_colored("╔═══════════════════════════════════════════════════════════════════════════╗", Colors.BLINK_GREEN)
+        print_colored("║                                                                           ║", Colors.BLINK_GREEN)
+        print_colored("║                        .....  SCAN COMPLETED  .....                       ║", Colors.BLINK_GREEN)
+        print_colored("║                                                                           ║", Colors.BLINK_GREEN)
+        print_colored("╚═══════════════════════════════════════════════════════════════════════════╝", Colors.BLINK_GREEN)
+        print("\n\n\n")
 
         health_score = get_system_health_score()
 
+        print(); print()
         print_status("REPORT GENERATION SUMMARY:", "SUCCESS")
         print_status(f"Output File: {html_path}", "DATA")
 
         if health_score >= 80:
-            print_status(f"System Health Score: {health_score}/100 (EXCELLENT)", "SUCCESS")
+            print("\t", end=''); print_status(f"System Health Score: {health_score}/100 (EXCELLENT)", "SUCCESS")
         elif health_score >= 60:
-            print_status(f"System Health Score: {health_score}/100 (GOOD)", "WARNING")
+            print("\t", end=''); print_status(f"System Health Score: {health_score}/100 (GOOD)", "WARNING")
         else:
-            print_status(f"System Health Score: {health_score}/100 (POOR)", "ERROR")
+            print("\t", end=''); print_status(f"System Health Score: {health_score}/100 (POOR)", "ERROR")
 
-        print()
+        print("\n\n")
 
         print_status("SECTIONS INCLUDED:", "INFO")
         sections = [
@@ -1734,7 +1760,7 @@ if __name__ == "__main__":
         for section in sections:
             print_colored(f"    ✓ {section}", Colors.GREEN)
 
-        print()
+        print("\n\n\n\n\n\n", end='')
         print_status("Opening report in default browser...", "INFO")
 
         # Try to open the file in default browser - ONLY ONCE
