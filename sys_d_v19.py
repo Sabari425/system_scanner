@@ -1995,37 +1995,6 @@ def generate_html_report():
 
 
 # -------------------------------------------------------------------
-#  MAIN EXECUTION WITH ENHANCED UI
-# -------------------------------------------------------------------
-if __name__ == "__main__":
-    print()
-    print_colored("SYSTEM SCAN INITIATED...", Colors.CYAN)
-    print_status("Initializing advanced scanner modules...", "INFO")
-
-    browser_opened = False
-
-    try:
-        html_path = generate_html_report()
-
-        print()
-        print_colored("╔═══════════════════════════════════════════════════════════════════════════╗",
-                      Colors.BRIGHT_GREEN)
-        print_colored("║                                                                           ║",
-                      Colors.BRIGHT_GREEN)
-        print_colored("║                       .....  SCAN COMPLETED  .....                        ║",
-                      Colors.BRIGHT_GREEN)
-        print_colored("║                                                                           ║",
-                      Colors.BRIGHT_GREEN)
-        print_colored("╚═══════════════════════════════════════════════════════════════════════════╝",
-                      Colors.BRIGHT_GREEN)
-        print("\n\n\n")
-
-    except Exception as e:
-        print_status(f"SCAN FAILED: {str(e)}", "ERROR")
-        print_status("Please ensure you have necessary permissions", "WARNING")
-
-
-# -------------------------------------------------------------------
 # GITHUB PUSH FUNCTION
 # -------------------------------------------------------------------
 def push_to_github():
@@ -2062,6 +2031,34 @@ def push_to_github():
 # -------------------------------------------------------------------
 # MAIN EXECUTION
 # -------------------------------------------------------------------
+if __name__ == "__main__":
+    print()
+    print_colored("SYSTEM SCAN INITIATED...", Colors.CYAN)
+    print_status("Initializing advanced scanner modules...", "INFO")
+
+    browser_opened = False
+
+    try:
+        html_path = generate_html_report()
+
+        print()
+        print_colored("╔═══════════════════════════════════════════════════════════════════════════╗",
+                      Colors.BRIGHT_GREEN)
+        print_colored("║                                                                           ║",
+                      Colors.BRIGHT_GREEN)
+        print_colored("║                       .....  SCAN COMPLETED  .....                        ║",
+                      Colors.BRIGHT_GREEN)
+        print_colored("║                                                                           ║",
+                      Colors.BRIGHT_GREEN)
+        print_colored("╚═══════════════════════════════════════════════════════════════════════════╝",
+                      Colors.BRIGHT_GREEN)
+        print("\n\n\n")
+
+    except Exception as e:
+        print_status(f"SCAN FAILED: {str(e)}", "ERROR")
+        print_status("Please ensure you have necessary permissions", "WARNING")
+
+        
 if __name__ == "__main__":
     success = push_to_github()
     if success:
