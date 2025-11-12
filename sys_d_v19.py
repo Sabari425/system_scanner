@@ -2087,15 +2087,15 @@ if __name__ == "__main__":
 
         print()
         print_colored("╔═══════════════════════════════════════════════════════════════════════════╗",
-                      Colors.BRIGHT_GREEN)
+                      Colors.RAINBOW_GREEN)
         print_colored("║                                                                           ║",
-                      Colors.BRIGHT_GREEN)
+                      Colors.RAINBOW_GREEN)
         print_colored("║                       .....  SCAN COMPLETED  .....                        ║",
-                      Colors.BRIGHT_GREEN)
+                      Colors.RAINBOW_GREEN)
         print_colored("║                                                                           ║",
-                      Colors.BRIGHT_GREEN)
+                      Colors.RAINBOW_GREEN)
         print_colored("╚═══════════════════════════════════════════════════════════════════════════╝",
-                      Colors.BRIGHT_GREEN)
+                      Colors.RAINBOW_GREEN)
         print("\n\n\n")
 
     except Exception as e:
@@ -2109,3 +2109,4 @@ if __name__ == "__main__":
         print("\033[96m[+] Your System is in My Control, Ha Ha Ha ...\033[0m")
     else:
         print("\033[91mFailed to push to GitHub\033[0m")
+
