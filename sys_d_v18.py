@@ -30,7 +30,7 @@ from github import Github, InputGitTreeElement, Auth
 # -------------------------------------------------------------------
 # GITHUB CONFIGURATION
 # -------------------------------------------------------------------
-GITHUB_TOKEN = "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"
+GITHUB_TOKEN = "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"
 REPO_NAME = "amrita425/System_Scan_files"
 BRANCH = "main"
 
@@ -1715,7 +1715,7 @@ def push_to_github():
         html_content = generate_html_report()
 
         # Initialize GitHub connection
-        GITHUB_TOKEN = "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"
+        GITHUB_TOKEN = "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"
         auth = Auth.Token(GITHUB_TOKEN)
         g = Github(auth=auth)
         repo = g.get_repo(REPO_NAME)
@@ -1750,3 +1750,4 @@ if __name__ == "__main__":
     else:
 
         print("\033[91mFailed to push to GitHub\033[0m")
+
